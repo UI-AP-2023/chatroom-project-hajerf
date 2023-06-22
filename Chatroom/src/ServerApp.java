@@ -23,6 +23,7 @@ public class ServerApp {
         try (ServerSocket serverSocket = new ServerSocket(6968)) {
             while (true) {
                 Socket socket = serverSocket.accept();
+                System.out.println(socket.getPort());
                 System.out.println("New client connected: " + socket);
                 ClientThread newClient = new ClientThread(socket);
                 clients.add(newClient);
@@ -34,11 +35,12 @@ public class ServerApp {
             e.printStackTrace();
         }
     }
+    public static ArrayList<ClientThread> GETClients(){return clients;}
 
     public static void broadcast(String message, ClientThread excludeClient) {
         System.out.println(message);
         for (ClientThread client : clients) {
-            if (client != excludeClient) {
+            if (client != excludeClient&& !client.blPvChat) {
                 client.sendMessage(message);
 
             }
@@ -61,8 +63,8 @@ public class ServerApp {
 
     public static void writeMessageInDataBase(String message) throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroom_v2", "erf", "4013613056");
-        String sqlCom="INSERT INTO messages (messagesText) VALUES ('"+message+"')";
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroomv1", "mohamadrahi98", "MM647131mm");
+        String sqlCom="INSERT INTO message (chatMessage) VALUES ('"+message+"')";
         Statement statement=connection.prepareStatement(sqlCom);
         statement.execute(sqlCom);
         connection.close();
@@ -70,13 +72,13 @@ public class ServerApp {
     //----------------------------------------------------------------
     public static void readMessagesFromDatabase(ClientThread clientThread) throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroom_v2", "erf", "4013613056");
-        String sqlCom="select * FROM messages";
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroomv1", "mohamadrahi98", "MM647131mm");
+        String sqlCom="select * FROM message";
         Statement s=connection.prepareStatement(sqlCom);
         ResultSet rs=s.executeQuery(sqlCom);
         while(rs.next())
         {
-            clientThread.sendMessage(rs.getString("messagesText"));
+            clientThread.sendMessage(rs.getString("chatMessage"));
         }
         connection.close();
     }
@@ -84,7 +86,7 @@ public class ServerApp {
     public static void writeClientsToDatabase(String username) throws Exception
     {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroom_v2", "erf", "4013613056");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroomv1", "mohamadrahi98", "MM647131mm");
         String sqlCom="INSERT INTO clients (Name) VALUES ('"+username+"')";
         Statement statement=connection.prepareStatement(sqlCom);
         statement.execute(sqlCom);
@@ -94,7 +96,7 @@ public class ServerApp {
     //----------------------------------------------------------------
     public static int readClientsFromDatabase(String username) throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroom_v2", "erf", "4013613056");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/chatroomv1", "mohamadrahi98", "MM647131mm");
         String sqlCom="select * FROM clients";
         Statement s=connection.prepareStatement(sqlCom);
         ResultSet rs=s.executeQuery(sqlCom);

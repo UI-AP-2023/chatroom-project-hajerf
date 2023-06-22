@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -11,16 +8,13 @@ public class ClientApp {
     public static PrintWriter out;
     public static InputStreamReader in;
     public static BufferedReader reader;
-
     public static long start;
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
         socket = new Socket("127.0.0.1", 6968);
         out = new PrintWriter(socket.getOutputStream(), true);
         in = new InputStreamReader(socket.getInputStream());
         reader = new BufferedReader(in);
-
         if (reader.readLine().equals("Connection was successful")) {
             String result = "nothing";
             do {
@@ -92,8 +86,10 @@ public class ClientApp {
                         reader.close();
                         socket.close();
                         break;
-                    }
-                    System.out.println(result);
+                    }else if(result.equals("accept to go pv chAT")){
+                        out.println("accept to go pv chAT");
+                    }else{
+                    System.out.println(result);}
                     if (result.contains("Connected")) {
                         long end = System.currentTimeMillis();
                         ping(start, end);
