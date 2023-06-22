@@ -11,19 +11,17 @@ public class ClientApp {
     public static PrintWriter out;
     public static InputStreamReader in;
     public static BufferedReader reader;
+
     public static long start;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        socket = new Socket("172.17.37.101", 6969);
+        socket = new Socket("127.0.0.1", 6968);
         out = new PrintWriter(socket.getOutputStream(), true);
         in = new InputStreamReader(socket.getInputStream());
         reader = new BufferedReader(in);
 
         if (reader.readLine().equals("Connection was successful")) {
-
-            }
-
             String result = "nothing";
             do {
                 System.out.println("Enter Username:");
@@ -38,20 +36,21 @@ public class ClientApp {
             out.println(" ");
             String firstResult = reader.readLine();
             if (firstResult.contains("Connected")) {
-            long end = System.currentTimeMillis();
-            ping(start, end);
 
-            ClientRead clientRead=new ClientRead();
-            Thread read=new Thread(clientRead);
-            read.start();
-            ClientWrite clientWrite=new ClientWrite();
-            Thread write=new Thread(clientWrite);
-            write.start();
+                long end = System.currentTimeMillis();
+                ping(start, end);
+                ClientRead clientRead=new ClientRead();
+                Thread read=new Thread(clientRead);
+                read.start();
+                ClientWrite clientWrite=new ClientWrite();
+                Thread write=new Thread(clientWrite);
+                write.start();
 
-            write.join();
-            read.join();
+                write.join();
+                read.join();
 
 
+            }
             System.out.println("this client is disconnected from the server!!");
         }
     }
@@ -78,11 +77,11 @@ public class ClientApp {
             }
         }
     }
-//----------------------------------------------------------------
-static class ClientRead implements Runnable {
+    //----------------------------------------------------------------
+    static class ClientRead implements Runnable {
 
-    @Override
-    public void run() {
+        @Override
+        public void run() {
 
             try {
                 while (true) {
@@ -107,7 +106,7 @@ static class ClientRead implements Runnable {
         }
     }
 
-//----------------------------------------------------------------
+    //----------------------------------------------------------------
     public static void ping(long start,long end )
     {
         long ping=end - start;
